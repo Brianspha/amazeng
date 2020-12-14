@@ -3,16 +3,21 @@
   "app": {
     "css/app.css": ["app/css/**"],
     "js/app.js": ["app/js/index.js"],
+    "js/drawMaze.js": ["app/js/drawMaze.js"],
+    "js/globalFunctions.js": ["app/js/globalFunctions.js"],
+    "js/mazeFactory.js": ["app/js/mazeFactory.js"],
+    "js/player.js": ["app/js/player.js"],
     "images/": ["app/images/**"],
     "index.html": "app/index.html"
   },
   "buildDir": "dist/",
   "config": "config/",
   "versions": {
-    "solc": "0.6.1"
+    "solc": "0.5.10"
   },
   "plugins": {
     "embark-geth": {},
+    "embark-profiler": {},
     "embark-basic-pipeline": {}
   },
   "options": {

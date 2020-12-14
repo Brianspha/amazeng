@@ -3,6 +3,7 @@
 module.exports = {
   // default applies to all environments
   default: {
+    "dappAutoEnable": true,
     enabled: true,
     client: "geth" // Can be ganache-cli, geth or parity (default: geth)
   },

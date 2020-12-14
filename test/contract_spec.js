@@ -1,41 +1,140 @@
 /*global artifacts, contract, it*/
-/*
-const SimpleStorage = artifacts.require('SimpleStorage');
-
-let accounts;
-
+/**/
 // For documentation please see https://framework.embarklabs.io/docs/contracts_testing.html
-config({
-  //deployment: {
-  //  accounts: [
-  //    // you can configure custom accounts with a custom balance
-  //    // see https://framework.embarklabs.io/docs/contracts_testing.html#Configuring-accounts
-  //  ]
-  //},
-  contracts: {
-    "SimpleStorage": {
-      args: [100]
-    }
+const Token = artifacts.require("ERC20");
+const Sablier = artifacts.require("Sablier");
+const Amazeng = artifacts.require("Amazeng");
+const bigNumber = require("bignumber.js");
+const intialAmount = new bigNumber(6000000 * 10 ** 18).toFixed();
+
+let accounts1,
+  tokenAmount,
+  startDate,
+  balance,
+  endDate,
+  deposit,
+  streamId,
+  keys,
+  tokenID,
+  decimals;
+config(
+  {
+    contracts: {
+      deploy: {
+        Amazeng: {
+          deps: ["ERC20", "Sablier"],
+          onDeploy: async ({ contracts, web3, logger }) => {
+            console.log("contracts: ", web3.eth.defaultAccount);
+            await contracts.Amazeng.methods
+              .init(
+                contracts.ERC20.options.address,
+                contracts.Sablier.options.address
+              )
+              .send({
+                gas: 800000,
+              });
+
+            await contracts.ERC20.methods
+              .transfer(contracts.Amazeng.options.address, intialAmount)
+              .send({
+                gas: 800000,
+              });
+
+            console.log("approved Amazeng contract...");
+          },
+        },
+        ERC20: {
+          args: ["AmazengToken", "AT", 18, intialAmount],
+        },
+        CTokenManager: {
+          args: [],
+        },
+        Sablier: {
+          deps: ["ERC20"],
+          args: ["$CTokenManager"],
+        },
+      },
+    },
+  },
+  (err, accs) => {
+    accounts = accs;
   }
-}, (_err, web3_accounts) => {
-  accounts = web3_accounts
-});*/
+);
 
-contract.skip("SimpleStorage", function () {
-
-  it("should set constructor value", async function () {
-    let result = await SimpleStorage.methods.storedData().call();
-    assert.strictEqual(parseInt(result, 10), 100);
+contract("ERC720", async () => {
+  it("should init  token contract and mint tokens", async () => {
+    it("should transfer tokens to the Amazeng Contract", async () => {
+      await Token.methods.transfer(Amazeng.options.address, intialAmount).send({
+        gas: 600000,
+      });
+      assert.strictEqual(receipt != null, true);
+      // console.log('receipt: ', receipt.events.Approval.returnValues)
+    });
+    /**/
   });
 
-  it("set storage value", async function () {
-    await SimpleStorage.methods.set(150).send();
-    let result = await SimpleStorage.methods.get().call();
-    assert.strictEqual(parseInt(result, 10), 150);
-  });
-
-  it("should have account with balance", async function() {
-    let balance = await web3.eth.getBalance(accounts[0]);
-    assert.ok(parseInt(balance, 10) > 0);
+  it("should transfer 100000000000000000000000", async () => {
+    var receipt = await Token.methods
+      .transfer(accounts[1], new bigNumber(200000000000000000000000000))
+      .send({
+        gas: 6000000,
+      });
+    assert.strictEqual(receipt != null, true);
+    // console.log('receipt: ', receipt.events.Approval.returnValues)
   });
 });
+
+contract("Amezeng", async function() {
+  console.log("Amazeng.options.address: ", Amazeng.options.address);
+  it("should start a stream", async function() {
+    tokenAmount = new bigNumber(Math.round(Math.random() * 300));
+    tokenAmount = tokenAmount.multipliedBy(new bigNumber(10).pow(18));
+    startDate = new bigNumber(
+      new Date(new Date().setHours(new Date().getHours() + 20)).getTime()
+    ).toFixed();
+    endDate = new bigNumber(
+      new Date(new Date().setDate(new Date().getDate() + 5)).getTime()
+    ).toFixed(); //5 days from now
+    startDate = Math.round(startDate / 1000);
+    endDate = Math.round(endDate / 1000);
+    console.log("startDate: ", startDate);
+    console.log("endDate: ", endDate);
+    console.log('tokenAmount: ',tokenAmount)
+    var timeDelta = new bigNumber(endDate - startDate);
+    console.log("timeDelta: ", timeDelta);
+    deposit = calculateDeposit(timeDelta, tokenAmount);
+    var bal = await Token.methods
+      .balanceOf(Amazeng.options.address)
+      .call({ gas: 6000000 });
+    console.log(deposit, bal, bal > deposit);
+    console.log(
+      `accounts[1],
+    deposit,
+    startDate,
+    endDate`,
+      accounts[1],
+      deposit,
+      startDate,
+      endDate
+    );
+    var streamReceipt = await Amazeng.methods
+      .startStream(accounts[1], deposit, startDate, endDate)
+      .send({ gas: 6000000 });
+    console.log("streamReceipt: ", streamReceipt.events.streamCreated.returnValues);
+    await increaseTime(172800);
+  });
+  it('should check user balance', async function(){
+   var bal = await Token.methods
+      .balanceOf(accounts[1])
+      .call({ gas: 6000000 });
+      console.log('user balance: ', new bigNumber(bal).div(10**18).toFixed())
+      assert.strictEqual(bal>0, true)
+  })
+});
+
+function calculateDeposit(delta, deposit) {
+  var diff = deposit.minus(deposit.minus(deposit.mod(delta)));
+  deposit = new bigNumber(deposit).minus(diff);
+  console.log("deposit.toFixed(): ", deposit.toFixed());
+  return deposit.toFixed();
+}

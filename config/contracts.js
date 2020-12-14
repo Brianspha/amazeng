@@ -1,14 +1,19 @@
+const bigNumber = require("bignumber.js");
+const intialAmount = new bigNumber(6000000 * 10 ** 18).toFixed();
+console.log("initialAmount: ", intialAmount);
+require("dotenv").config();
+console.log("process.env: ", process.env.GAME_KEY);
 module.exports = {
   // default applies to all environments
   default: {
-    library: 'embarkjs',  // can also be 'web3'
+    library: "embarkjs", // can also be 'web3'
 
     // order of connections the dapp should connect to
     dappConnection: [
       "$EMBARK",
-      "$WEB3",  // uses pre existing web3 object if available (e.g in Mist)
+      "$WEB3", // uses pre existing web3 object if available (e.g in Mist)
       "ws://localhost:8546",
-      "http://localhost:8545"
+      "http://localhost:8545",
     ],
 
     // Automatically call `ethereum.enable` if true.
@@ -32,11 +37,45 @@ module.exports = {
     // filteredFields: [],
 
     deploy: {
-      // example:
-      //SimpleStorage: {
-      //  args: [ 100 ]
-      //}
-    }
+      strategy: "implicit",
+      deploy: {
+        Amazeng: {
+          deps: ["ERC20", "Sablier"],
+          onDeploy: async ({ contracts, web3, logger }) => {
+            console.log("contracts: ", web3.eth.defaultAccount);
+            await contracts.Amazeng.methods
+              .init(
+                contracts.ERC20.options.address,
+                contracts.Sablier.options.address
+              )
+              .send({
+                gas: 800000,
+              });
+           
+            await contracts.ERC20.methods
+              .transfer(
+                contracts.Amazeng.options.address,
+                intialAmount
+              )
+              .send({
+                gas: 800000,
+              });
+
+            console.log("approved Amazeng contract...");
+          },
+        },
+        ERC20: {
+          args: ["AmazengToken", "AT", 18, intialAmount],
+        },
+        CTokenManager: {
+          args: [],
+        },
+        Sablier: {
+          deps: ["ERC20"],
+          args: ["$CTokenManager"],
+        },
+      },
+    },
   },
 
   // default environment, merges with the settings in default

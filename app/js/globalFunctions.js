@@ -32,7 +32,7 @@ function changeBrightness(factor, sprite) {
     return spriteOutput;
 }
 
-function displayVictoryMess(moves) {
+function levelCompleted(moves) {
     document.getElementById("moves").innerHTML = "You Moved " + moves + " Steps.";
     toggleVisablity("Message-Container");
     document.getElementById("okBtn").focus();
@@ -51,5 +51,5 @@ module.exports={
     changeBrightness,
     toggleVisablity,
     rand,
-    displayVictoryMess
+    levelCompleted
 }
