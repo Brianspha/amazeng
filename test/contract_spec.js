@@ -90,16 +90,16 @@ contract("Amezeng", async function() {
     tokenAmount = new bigNumber(Math.round(Math.random() * 300));
     tokenAmount = tokenAmount.multipliedBy(new bigNumber(10).pow(18));
     startDate = new bigNumber(
-      new Date(new Date().setHours(new Date().getHours() + 20)).getTime()
+      new Date(new Date().setHours(new Date().getMinutes() + 10)).getTime()
     ).toFixed();
     endDate = new bigNumber(
       new Date(new Date().setDate(new Date().getDate() + 5)).getTime()
     ).toFixed(); //5 days from now
-    startDate = Math.round(startDate / 1000);
-    endDate = Math.round(endDate / 1000);
+    startDate = Math.round(startDate);
+    endDate = Math.round(endDate);
     console.log("startDate: ", startDate);
     console.log("endDate: ", endDate);
-    console.log('tokenAmount: ',tokenAmount)
+    console.log("tokenAmount: ", tokenAmount);
     var timeDelta = new bigNumber(endDate - startDate);
     console.log("timeDelta: ", timeDelta);
     deposit = calculateDeposit(timeDelta, tokenAmount);
@@ -112,24 +112,25 @@ contract("Amezeng", async function() {
     deposit,
     startDate,
     endDate`,
-      accounts[1],
+      accounts[2],
       deposit,
       startDate,
       endDate
     );
     var streamReceipt = await Amazeng.methods
-      .startStream(accounts[1], deposit, startDate, endDate)
+      .startStream(deposit, startDate, endDate)
       .send({ gas: 6000000 });
-    console.log("streamReceipt: ", streamReceipt.events.streamCreated.returnValues);
-    await increaseTime(172800);
+    streamId = streamReceipt.events.streamCreated.returnValues.streamId;
+    console.log("streamReceipt: ", streamId);
+    await increaseTime(1608120580);
   });
-  it('should check user balance', async function(){
-   var bal = await Token.methods
-      .balanceOf(accounts[1])
+  it("should check user balance", async function() {
+    var bal = await Sablier.methods
+      .balanceOf(streamId, accounts[2])
       .call({ gas: 6000000 });
-      console.log('user balance: ', new bigNumber(bal).div(10**18).toFixed())
-      assert.strictEqual(bal>0, true)
-  })
+    console.log("user balance: ", new bigNumber(bal).div(10 ** 18).toFixed());
+    assert.strictEqual(bal > 0, true);
+  });
 });
 
 function calculateDeposit(delta, deposit) {

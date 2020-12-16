@@ -3594,7 +3594,7 @@ debug@*, debug@^4.1.0, debug@^4.1.1:
   dependencies:
     ms "2.1.2"
 
-debug@2.6.9, debug@^2.1.1, debug@^2.2.0, debug@^2.3.3, debug@^2.6.9:
+debug@2.6.9, debug@^2.1.1, debug@^2.2.0, debug@^2.3.2, debug@^2.3.3, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
   integrity sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==
@@ -5584,6 +5584,19 @@ ethereumjs-util@6.1.0, ethereumjs-util@~6.1.0:
     safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
+ethereumjs-util@6.2.1, ethereumjs-util@^6.0.0, ethereumjs-util@^6.1.0, ethereumjs-util@^6.2.0:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/ethereumjs-util/-/ethereumjs-util-6.2.1.tgz#fcb4e4dd5ceacb9d2305426ab1a5cd93e3163b69"
+  integrity sha512-W2Ktez4L01Vexijrm5EB6w7dg4n/TgpoYU4avuT5T3Vmnw/eCRtiBrJfQYS/DCSvDIOLn2k57GcHdeBcgVxAqw==
+  dependencies:
+    "@types/bn.js" "^4.11.3"
+    bn.js "^4.11.0"
+    create-hash "^1.1.2"
+    elliptic "^6.5.2"
+    ethereum-cryptography "^0.1.3"
+    ethjs-util "0.1.6"
+    rlp "^2.2.3"
+
 ethereumjs-util@^4.3.0:
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/ethereumjs-util/-/ethereumjs-util-4.5.1.tgz#f4bf9b3b515a484e3cc8781d61d9d980f7c83bd0"
@@ -5607,19 +5620,6 @@ ethereumjs-util@^5.0.0, ethereumjs-util@^5.1.1, ethereumjs-util@^5.1.2, ethereum
     ethjs-util "^0.1.3"
     rlp "^2.0.0"
     safe-buffer "^5.1.1"
-
-ethereumjs-util@^6.0.0, ethereumjs-util@^6.1.0, ethereumjs-util@^6.2.0:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/ethereumjs-util/-/ethereumjs-util-6.2.1.tgz#fcb4e4dd5ceacb9d2305426ab1a5cd93e3163b69"
-  integrity sha512-W2Ktez4L01Vexijrm5EB6w7dg4n/TgpoYU4avuT5T3Vmnw/eCRtiBrJfQYS/DCSvDIOLn2k57GcHdeBcgVxAqw==
-  dependencies:
-    "@types/bn.js" "^4.11.3"
-    bn.js "^4.11.0"
-    create-hash "^1.1.2"
-    elliptic "^6.5.2"
-    ethereum-cryptography "^0.1.3"
-    ethjs-util "0.1.6"
-    rlp "^2.2.3"
 
 ethereumjs-util@^7.0.2:
   version "7.0.7"
@@ -5745,6 +5745,15 @@ event-pubsub@4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/event-pubsub/-/event-pubsub-4.3.0.tgz#f68d816bc29f1ec02c539dc58c8dd40ce72cb36e"
   integrity sha512-z7IyloorXvKbFx9Bpie2+vMJKKx1fH1EN5yiTfp8CiLOTptSYy1g8H4yDpGlEdshL1PBiFtBHepF2cNsqeEeFQ==
+
+eventemitter-co@^1.0.4:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/eventemitter-co/-/eventemitter-co-1.0.5.tgz#6ee6206bd98f5596fb1d99c425f9a117f5717c32"
+  integrity sha1-buYga9mPVZb7HZnEJfmhF/VxfDI=
+  dependencies:
+    co "^4.6.0"
+    mout "^1.0.0"
+    uclass "^2.4.0"
 
 eventemitter3@3.1.2, eventemitter3@^3.0.0:
   version "3.1.2"
@@ -6020,6 +6029,11 @@ file-loader@5.0.2:
   dependencies:
     loader-utils "^1.2.3"
     schema-utils "^2.5.0"
+
+file-saver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 file-type@^3.8.0:
   version "3.9.0"
@@ -6350,6 +6364,15 @@ ganache-cli@6.8.2:
   integrity sha512-FgsJx/hHh7A1/fmSQpNT5jxZ3dYEal4zQMqYyA8Bm7S6MgrVO48hIjnROn2JteubHY8Rob8LzxMkhEvoQce7WA==
   dependencies:
     ethereumjs-util "6.1.0"
+    source-map-support "0.5.12"
+    yargs "13.2.4"
+
+ganache-cli@^6.12.1:
+  version "6.12.1"
+  resolved "https://registry.yarnpkg.com/ganache-cli/-/ganache-cli-6.12.1.tgz#148cf6541494ef1691bd68a77e4414981910cb3e"
+  integrity sha512-zoefZLQpQyEJH9jgtVYgM+ENFLAC9iwys07IDCsju2Ieq9KSTLH89RxSP4bhizXKV/h/+qaWpfyCBGWnBfqgIQ==
+  dependencies:
+    ethereumjs-util "6.2.1"
     source-map-support "0.5.12"
     yargs "13.2.4"
 
@@ -8568,6 +8591,11 @@ modal-vanilla@^0.9.0:
   resolved "https://registry.yarnpkg.com/modal-vanilla/-/modal-vanilla-0.9.0.tgz#7816d144216c9d209cc3953648889c71abf4acb2"
   integrity sha512-uYn5Z1danY8+im2vsL1zj0yZL9vV+CHOQoDlPUMPavjh4BKgsPkza8s4YS+EuTtN1HBNNxeV7eoTIdQiwrbmzw==
 
+mout@^1.0.0:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/mout/-/mout-1.2.2.tgz#c9b718a499806a0632cede178e80f436259e777d"
+  integrity sha512-w0OUxFEla6z3d7sVpMZGBCpQvYh8PHS1wZ6Wu9GNKHMpAHWJ0if0LsQZh3DlOqw55HlhJEOMLpFnwtxp99Y5GA==
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -8978,6 +9006,20 @@ number-to-bn@1.7.0, number-to-bn@^1.7.0:
   dependencies:
     bn.js "4.11.6"
     strip-hex-prefix "1.0.0"
+
+nyks@^3.16.0:
+  version "3.19.2"
+  resolved "https://registry.yarnpkg.com/nyks/-/nyks-3.19.2.tgz#13b0c3c1b4e49b397a27d87e8a244780718e9f6d"
+  integrity sha1-E7DDwbTkmzl6J9h+iiRHgHGOn20=
+  dependencies:
+    mout "^1.0.0"
+
+nyks@^4.0.7:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/nyks/-/nyks-4.4.0.tgz#d61cc6931dc1bcd059e61689a64348aaba48255d"
+  integrity sha512-+BwXiqGDXIxckHvSfp/VWAiuau1BaJ90OdDkp+Ixo5ok2ejBzz8UmgCiivhy9W8n1GTL2v3OyK+hNQNVQqP0Nw==
+  dependencies:
+    mout "^1.0.0"
 
 oauth-sign@~0.9.0:
   version "0.9.0"
@@ -10042,6 +10084,16 @@ rechoir@^0.6.2:
   dependencies:
     resolve "^1.1.6"
 
+record-screen@^3.18.0:
+  version "3.18.0"
+  resolved "https://registry.yarnpkg.com/record-screen/-/record-screen-3.18.0.tgz#b7cb39105c9b3cdf155060bd45d75c8d38e3dbff"
+  integrity sha512-bY1QBIIyzVRQmkdPnDyd8hObsW3waX+BQWga8sMbD8Aq34574XcVobmFVWM8VE6eXq/fQYCVNmCotU/ySic62w==
+
+recordrtc@^5.6.1:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/recordrtc/-/recordrtc-5.6.1.tgz#da876700fa149bbb230df7591a020e2c43de01c8"
+  integrity sha512-UU7Fd9IIuz60TPq4GgL1qtgo2mzEZWzPxEraNe32eo4/ndjKmuj715HB7W1k63G09teM1dXJYubPEmLkQ/lq5Q==
+
 redent@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/redent/-/redent-1.0.0.tgz#cf916ab1fd5f1f16dfb20822dd6ec7f730c2afde"
@@ -10562,6 +10614,15 @@ schema-utils@^3.0.0:
     "@types/json-schema" "^7.0.6"
     ajv "^6.12.5"
     ajv-keywords "^3.5.2"
+
+screen-capture-recorder@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/screen-capture-recorder/-/screen-capture-recorder-3.0.3.tgz#1b24146488c8da7becd5b3620bd35b66b7b247c1"
+  integrity sha512-hujOjhv0p/GoDRY1LfWcuk7mKTytL37Rw2XBClMEvEtpudVuyjMK/1d62zI/Z8PBH3Pp553eZ+JvpgercgUSog==
+  dependencies:
+    mout "^1.0.0"
+    nyks "^3.16.0"
+    vlc-remote "^4.2.2"
 
 scrypt-js@2.0.3:
   version "2.0.3"
@@ -11276,6 +11337,11 @@ stream-shift@^1.0.0:
   resolved "https://registry.yarnpkg.com/stream-shift/-/stream-shift-1.0.1.tgz#d7088281559ab2778424279b0877da3c392d5a3d"
   integrity sha512-AiisoFqQ0vbGcZgQPY1cdP2I76glaVA/RauYR4G4thNFgkTqr90yXTo4LYX60Jl+sIlPNHHdGSwo01AvbKUSVQ==
 
+streamsaver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/streamsaver/-/streamsaver-2.0.5.tgz#3212f0e908fcece5b3a65591094475cf87850d00"
+  integrity sha512-KIWtBvi8A6FiFZGNSyuIZRZM6C8AvnWTiCx/TYa7so420vC5sQwcBKkdqInuGWoWMfeWy/P+/cRqMtWVf4RW9w==
+
 strict-uri-encode@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
@@ -11883,6 +11949,13 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
+uclass@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/uclass/-/uclass-2.4.0.tgz#12ed560680bff5b0482069375000fd1a9a8e4528"
+  integrity sha1-Eu1WBoC/9bBIIGk3UAD9GpqORSg=
+  dependencies:
+    mout "^1.0.0"
+
 uglify-js@^3.1.4:
   version "3.12.1"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.12.1.tgz#78307f539f7b9ca5557babb186ea78ad30cc0375"
@@ -12163,6 +12236,23 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
+
+vlc-player@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/vlc-player/-/vlc-player-1.0.0.tgz#bff646d76053deaa982f640d185c00bfc40a3192"
+  integrity sha1-v/ZG12BT3qqYL2QNGFwAv8QKMZI=
+
+vlc-remote@^4.2.2:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/vlc-remote/-/vlc-remote-4.2.3.tgz#01d73701f7782eb44cc1a0eaa40d1cf548454801"
+  integrity sha512-f+GeH0xN0s5wYxB9oGJ1tIRoaucEoCIKv+E3kVdGoHOm6b2DXrDsc6Gpa0nOVeCAGneRrmlZJgmABYy+qTQVng==
+  dependencies:
+    debug "^2.3.2"
+    eventemitter-co "^1.0.4"
+    mout "^1.0.0"
+    nyks "^4.0.7"
+  optionalDependencies:
+    vlc-player "1.0.0"
 
 vm-browserify@^1.0.1:
   version "1.1.2"

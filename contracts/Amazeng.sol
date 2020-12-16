@@ -40,20 +40,18 @@ contract Amazeng is Initializable {
     }
 
     function startStream(
-        address receipient,
         uint256 amount,
         uint256 startDate,
         uint256 endDate
     ) public returns (uint256) {
         require(amount >0 && startDate>0 && endDate >0, "Start End and Amount must be greater than 0");
         require(msg.sender != address(0), "Invalid sender address");
-        require(receipient != msg.sender, "Sender not allowed to stream to self");
          require(
             tokenContract.approve(address(sablierContract), amount),
             "Something went wrong whilst approving token"
         );
         uint256 stream_id = sablierContract.createStream(
-            owner,
+            msg.sender,
             amount,
             address(tokenContract),
             startDate,

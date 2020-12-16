@@ -1,18 +1,20 @@
+require("dotenv").config({ path: "./vars/vars.env" });
+console.log('process.env.BINANCE_PROVIDER_URL: ',process.env.BINANCE_PROVIDER_URL)
 // This file contains only the basic configuration you need to run Embark's node
 // For additional configurations, see: https://framework.embarklabs.io/docs/blockchain_configuration.html
 module.exports = {
   // default applies to all environments
   default: {
-    "dappAutoEnable": true,
+    dappAutoEnable: true,
     enabled: true,
-    client: "geth" // Can be ganache-cli, geth or parity (default: geth)
+    client: "geth", // Can be ganache-cli, geth or parity (default: geth)
   },
 
   development: {
-    client: 'ganache-cli',
+    client: "ganache-cli",
     clientConfig: {
-      miningMode: 'dev' // Mode in which the node mines. Options: dev, auto, always, off
-    }
+      miningMode: "dev", // Mode in which the node mines. Options: dev, auto, always, off
+    },
   },
 
   privatenet: {
@@ -23,21 +25,21 @@ module.exports = {
       {
         nodeAccounts: true, // Accounts use for the node
         numAddresses: "1", // Number of addresses/accounts (defaults to 1)
-        password: "config/development/password" // Password file for the accounts
-      }
+        password: "config/development/password", // Password file for the accounts
+      },
     ],
     clientConfig: {
       datadir: ".embark/privatenet/datadir", // Data directory for the databases and keystore
-      miningMode: 'auto',
-      genesisBlock: "config/privatenet/genesis.json" // Genesis block to initiate on first creation of a development node
-    }
+      miningMode: "auto",
+      genesisBlock: "config/privatenet/genesis.json", // Genesis block to initiate on first creation of a development node
+    },
   },
 
   privateparitynet: {
     client: "parity",
     genesisBlock: "config/privatenet/genesis-parity.json",
     datadir: ".embark/privatenet/datadir",
-    miningMode: 'off'
+    miningMode: "off",
   },
 
   externalnode: {
@@ -46,9 +48,9 @@ module.exports = {
       {
         mnemonic: "YOUR_MNEMONIC",
         hdpath: "m/44'/60'/0'/0/",
-        numAddresses: "1"
-      }
-    ]
+        numAddresses: "1",
+      },
+    ],
   },
 
   testnet: {
@@ -57,21 +59,40 @@ module.exports = {
     accounts: [
       {
         nodeAccounts: true,
-        password: "config/testnet/password"
-      }
+        password: "config/testnet/password",
+      },
+    ],
+  },
+  binance: {
+    endpoint: process.env.BINANCE_PROVIDER_URL,
+    accounts: [
+      {
+        mnemonic: process.env.MNEUNOMIC,
+        hdpath: "m/44'/60'/0'/0/",
+        numAddresses: "1",
+      },
     ]
   },
-
+  binance: {
+    endpoint: "https://data-seed-prebsc-1-s1.binance.org:8545",
+    accounts: [
+      {
+        mnemonic: process.env.MNEUNOMIC,
+        hdpath: "m/44'/60'/0'/0/",
+        numAddresses: "1",
+      },
+    ]
+  },
   livenet: {
     networkType: "livenet",
     syncMode: "light",
     accounts: [
       {
         nodeAccounts: true,
-        password: "config/livenet/password"
-      }
-    ]
-  }
+        password: "config/livenet/password",
+      },
+    ],
+  },
 
   // you can name an environment with specific settings and then specify with
   // "embark run custom_name" or "embark blockchain custom_name"

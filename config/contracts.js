@@ -1,5 +1,5 @@
 const bigNumber = require("bignumber.js");
-const intialAmount = new bigNumber(6000000 * 10 ** 18).toFixed();
+const intialAmount = new bigNumber(9900000000000000000000 * 10 ** 18).toFixed();
 console.log("initialAmount: ", intialAmount);
 require("dotenv").config();
 console.log("process.env: ", process.env.GAME_KEY);
@@ -51,7 +51,14 @@ module.exports = {
               .send({
                 gas: 800000,
               });
-           
+              await contracts.ERC20.methods
+              .approve(
+                contracts.Amazeng.options.address,
+                intialAmount
+              )
+              .send({
+                gas: 800000,
+              });
             await contracts.ERC20.methods
               .transfer(
                 contracts.Amazeng.options.address,
@@ -81,7 +88,55 @@ module.exports = {
   // default environment, merges with the settings in default
   // assumed to be the intended environment by `embark run`
   development: {},
+  binance:{
+    deploy: {
+      strategy: "implicit",
+      deploy: {
+        Amazeng: {
+          deps: ["ERC20", "Sablier"],
+          onDeploy: async ({ contracts, web3, logger }) => {
+            console.log("contracts: ", web3.eth.defaultAccount);
+            await contracts.Amazeng.methods
+              .init(
+                contracts.ERC20.options.address,
+                contracts.Sablier.options.address
+              )
+              .send({
+                gas: 800000,
+              });
+              await contracts.ERC20.methods
+              .approve(
+                contracts.Amazeng.options.address,
+                intialAmount
+              )
+              .send({
+                gas: 800000,
+              });
+            await contracts.ERC20.methods
+              .transfer(
+                contracts.Amazeng.options.address,
+                intialAmount
+              )
+              .send({
+                gas: 800000,
+              });
 
+            console.log("approved Amazeng contract...");
+          },
+        },
+        ERC20: {
+          args: ["AmazengToken", "AT", 18, intialAmount],
+        },
+        CTokenManager: {
+          args: [],
+        },
+        Sablier: {
+          deps: ["ERC20"],
+          args: ["$CTokenManager"],
+        },
+      },
+    }
+  },
   // merges with the settings in default
   // used with "embark run privatenet"
   privatenet: {},

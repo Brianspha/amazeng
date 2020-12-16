@@ -12,6 +12,10 @@ import utils from "web3-utils";
 import bigNumber from "bignumber.js";
 import "js-loading-overlay";
 import ERC20 from "../../embarkArtifacts/contracts/ERC20";
+import Amazeng from "../../embarkArtifacts/contracts/Amazeng";
+import RecordRTC from "recordrtc";
+import streamSaver from "streamsaver";
+import FileSaver from "file-saver";
 /*=========================================== variables start=========================================== */
 /*
 // create network instance
@@ -40,16 +44,21 @@ console.log("matic: ", matic);
 
 */
 EmbarkJS.enableEthereum();
+
+var recordedBlobs = [];
 var ownerAddress = "0x5F03294478c1184e38fefB2A6C088840D4aAFD25";
 console.log("GAME_KEY: ", process.env.GAME_KEY);
 var difficultyIncrementor = 2;
 var level = 15;
 var difficulty = 6;
 var currentLevel = 0;
-var currentTime = 60000 * 2;
+var currentTime = 10000 * 2;
 var baseTimeAdder = 20000;
 var collectedTime = 0;
 var tokenToStream = 0;
+let stream, recorder;
+var canRecord = false;
+var mediaRecorder = {};
 localStorage.setItem("player", JSON.stringify({ levels: [], address: "" }));
 var bonusCollected = false;
 document.getElementById("level").innerHTML =
@@ -60,22 +69,120 @@ const timer = new Timer();
 
 timer.on("tick", (ms) => {
   currentTime = ms;
-  document.getElementById("time").innerHTML =
-    "Time Left: " + (currentTime / 1000).toFixed(0) + " s";
+  if (ms <= 0) {
+    showGameOver(web3.eth.defaultAccount);
+  } else {
+    document.getElementById("time").innerHTML =
+      "Time Left: " + (currentTime / 1000).toFixed(0) + " s";
+  }
 });
 timer.on("done", () => console.log("done!"));
 timer.on("statusChanged", (status) => console.log("status:", status));
-
 timer.start(currentTime);
 /*=========================================== functions start=========================================== */
+
+async function initRecorder() {}
+function handleDataAvailable(event) {
+  if (event.data && event.data.size > 0) {
+    recordedBlobs.push(event.data);
+  }
+}
+async function handleStop(event) {
+  const superBuffer = new Blob(recordedBlobs, { type: "video/webm" });
+  var data = await blobToVideo(superBuffer);
+  //await Promise.resolve(upload(data));
+  FileSaver.saveAs(data, "recording" + Date.now() + ".webm");
+}
+function stopRecording() {
+  mediaRecorder.stop();
+}
+
+function showLoading() {
+  JsLoadingOverlay.show({ spinnerIcon: "ball-pulse-rise" });
+}
+
+function hideLoading() {
+  JsLoadingOverlay.hide();
+}
+async function blobToVideo(blob) {
+  return new Promise((resolve) => {
+    var reader = new FileReader();
+    reader.onloadend = function(evt) {
+      if (evt.target.readyState == FileReader.DONE) {
+        //callback(evt.target.result);
+        resolve("data:video/webm;base64," + btoa(evt.target.result));
+      }
+    };
+    reader.readAsBinaryString(blob);
+  });
+}
+function setUpRecorder() {
+  stream = document.getElementById("mazeCanvas");
+  stream = stream.captureStream();
+  let options = { mimeType: "video/webm" };
+  recordedBlobs = [];
+  try {
+    mediaRecorder = new MediaRecorder(stream, options);
+  } catch (e0) {
+    console.log("Unable to create MediaRecorder with options Object: ", e0);
+    try {
+      options = { mimeType: "video/webm;codecs=vp8" };
+      mediaRecorder = new MediaRecorder(stream, options);
+    } catch (e1) {
+      console.log("Unable to create MediaRecorder with options Object: ", e1);
+      try {
+        options = { mimeType: "video/webm;codecs=daala" };
+        mediaRecorder = new MediaRecorder(stream, options);
+      } catch (e2) {
+        try {
+          options = { mimeType: "video/webm;codecs=h264" };
+          mediaRecorder = new MediaRecorder(stream, options);
+        } catch (error) {
+          try {
+            options = { mimeType: "video/webm;codecs=h264" };
+            mediaRecorder = new MediaRecorder(stream, options);
+          } catch (error) {
+            try {
+              options = { mimeType: "video/mpeg" };
+              mediaRecorder = new MediaRecorder(stream, options);
+            } catch (error) {
+              alert(
+                "MediaRecorder is not supported by this browser.\n\n" +
+                  "Try Firefox 29 or later, or Chrome 47 or later, " +
+                  "with Enable experimental Web Platform features enabled from chrome://flags."
+              );
+              console.error("Exception while creating MediaRecorder:", e2);
+              return;
+            }
+          }
+        }
+      }
+    }
+  }
+  mediaRecorder.ondataavailable = handleDataAvailable;
+  mediaRecorder.onstop = handleStop;
+}
+function startRecording() {
+  mediaRecorder.start();
+  //mediaRecorder.start();
+}
+
 window.ethereum.on("accountsChanged", function(accounts) {});
 window.ethereum.on("networkChanged", function(netId) {});
 console.log('$("#button"): ', $("#button"));
-$("#button").on("click", (e) => {
-  timer.pause();
-  console.log("in button");
-  getUserAddress();
-});
+function error(message) {
+  swal
+    .fire({
+      title: "Error",
+      text: message,
+      showDenyButton: false,
+      showCancelButton: false,
+      confirmButtonText: `To Menu`,
+    })
+    .then((result) => {
+      location.reload();
+    });
+}
 function showGameOver(address) {
   swal
     .fire({
@@ -90,11 +197,18 @@ function showGameOver(address) {
     })
     .then((result) => {
       if (result.value) {
-        startTokenStream(address);
+        if (collectedTime <= 0 && tokenToStream <= 0) {
+          showNoTokensCollectedError();
+        } else {
+          startTokenStream(address, player.getMoves());
+        }
       } else {
         restart();
       }
     });
+}
+function restart() {
+  location.reload();
 }
 function successWithFooter(message, address) {
   swal
@@ -102,15 +216,15 @@ function successWithFooter(message, address) {
       icon: "success",
       title: "Shmoney",
       text: message,
-      footer: `<a href=https://ropsten.etherscan.io/address/${address}>Click here</a>`,
-      showCancelButton: true,
+      footer: `<a href=https://ropsten.etherscan.io/address/${address}>Etherscan</a>`,
+      showCancelButton: false,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Close",
     })
     .then((result) => {
       if (result.value) {
-        restart();
+        continueTimer();
       }
     });
 }
@@ -131,22 +245,42 @@ function errorWithOptions(mesage) {
       }
     });
 }
-function startTokenStream(userAddress) {
+function startTokenStream(userAddress, moves) {
+  timer.pause();
   JsLoadingOverlay.show({
     spinnerIcon: "ball-running-dots",
   });
   var perRound = new bigNumber(100000).multipliedBy(new bigNumber(10).pow(18)); //@dev this is known i.e. decimal places
   var amount = perRound.multipliedBy(tokenToStream);
-  var tempStartTime = Math.floor(
-    new Date(new Date().getTime() + 30 * 60000).getTime() / 1000
-  );
-  var timeDelta =
-    Math.floor(collectedTime / 1000) - Math.floor(new Date().getTime() / 1000);
-  var endDate = tempStartTime + Math.floor(collectedTime / 1000);
+  var tempStartTime = new bigNumber(
+    new Date(new Date().setMinutes(new Date().getMinutes() + 10)).getTime()
+  ).toFixed();
+  var duration = getDuration(collectedTime);
+  if (duration.unit === "days") {
+    var endDate = new bigNumber(
+      new Date(
+        new Date().setDate(new Date().getDate() + duration.value)
+      ).getTime()
+    ).toFixed();
+  }
+  if (duration.unit === "hours") {
+    var endDate = new bigNumber(
+      new Date(
+        new Date().setHours(new Date().getHours() + duration.value)
+      ).getTime()
+    ).toFixed();
+  } else {
+    var endDate = new bigNumber(
+      new Date(
+        new Date().setMinutes(new Date().getMinutes() + duration.value + 30) //@dev add 30 minutes for safety
+      ).getTime()
+    ).toFixed();
+  }
+  var timeDelta = new bigNumber(tempStartTime - endDate);
+  console.log("timeDelta: ", timeDelta);
   amount = calculateDeposit(timeDelta, amount);
   amount = amount.toFixed();
   console.log("user token payout: ", amount);
-
   console.log("timeDelta: ", timeDelta, " endDate: ", endDate);
   console.log("sablier", sablier);
   console.log(
@@ -162,24 +296,43 @@ function startTokenStream(userAddress) {
     endDate,
     ownerAddress
   );
-  sablier.methods
-    .createStream(
-      userAddress,
-      amount,
-      ERC20.options.address,
-      tempStartTime,
-      endDate
-    )
+  Amazeng.methods
+    .startStream(amount, tempStartTime, endDate)
     .send({
       gas: 6000000,
-      from: ownerAddress,
+      from: userAddress,
     })
     .then((receipt, error) => {
       if (receipt) {
         successWithFooter(
-          "Token stream has been initiated, and will start in 30 minutes, please check your balance your Amazeng token balance on Etherscan",
+          "Token stream has been initiated, and will start in 10 minutes, please check your Amazeng token balance on Etherscan click on link in footer",
           userAddress
         );
+
+        var temp = JSON.parse(localStorage.getItem("player"));
+        var found = false;
+        temp.levels = temp.levels.map((level) => {
+          if (level.level === currentLevel) {
+            found = true;
+            level.sablierTimeCollected = collectedTime;
+            level.tokensCollected = tokenToStream;
+          }
+          collectedTime = 0;
+          tokenToStream = 0;
+          return level;
+        });
+        if (!found) {
+          temp.levels.push({
+            level: currentLevel,
+            time: currentTime,
+            steps: moves,
+            sablierTimeCollected: collectedTime,
+            tokensCollected: tokenToStream,
+          });
+        }
+        localStorage.setItem("player", JSON.stringify(temp));
+        resetLabels(false);
+        continueTimer();
       }
       console.log("receipt: ", receipt);
       console.log("error: ", error);
@@ -200,7 +353,7 @@ function calculateDeposit(delta, deposit) {
   console.log("deposit.toFixed(): ", deposit.toFixed());
   return deposit;
 }
-function getUserAddress() {
+function getUserAddress(moves) {
   swal
     .mixin({
       input: "text",
@@ -225,15 +378,29 @@ function getUserAddress() {
         } else {
           console.log("answers: ", address);
           if (collectedTime > 0) {
-            startTokenStream(address);
+            startTokenStream(address, moves);
           } else {
             showNoTokensCollectedError();
           }
         }
       } else {
-        showAddressError();
+        continueTimer();
+        return false;
       }
     });
+}
+function getDuration(milli) {
+  let minutes = Math.floor(milli / 60000);
+  let hours = Math.round(minutes / 60);
+  let days = Math.round(hours / 24);
+
+  return (
+    (days && { value: days, unit: "days" }) ||
+    (hours && { value: hours, unit: "hours" }) || {
+      value: minutes,
+      unit: "minutes",
+    }
+  );
 }
 function showAddressError() {
   swal
@@ -254,8 +421,8 @@ function showAddressError() {
 function showNoTokensCollectedError() {
   swal
     .fire({
-      title: "No Collected Tokens",
-      text: "Seems like you havent collected any tokens",
+      title: "No Collected Time Tokens",
+      text: "Seems like you havent collected any time tokens",
       icon: "warning",
       showCancelButton: false,
       confirmButtonColor: "#3085d6",
@@ -325,19 +492,36 @@ function levelCompleted(moves) {
       confirmButtonColor: "#3085d6",
       confirmButtonText: "Continue",
     })
-    .then((result) => {
+    .then(async (result) => {
       if (result.isConfirmed) {
         var temp = JSON.parse(localStorage.getItem("player"));
-        temp.levels.push({
-          level: currentLevel,
-          time: currentTime,
-          steps: moves,
-          sablierTimeCollected: collectedTime,
-          tokensCollected: tokenToStream,
+        var found = false;
+        temp.levels = temp.levels.map((level) => {
+          if (level.level === currentLevel) {
+            found = true;
+            level = {
+              level: currentLevel,
+              time: currentTime,
+              steps: moves,
+              sablierTimeCollected: collectedTime,
+              tokensCollected: tokenToStream,
+            };
+          }
+          return level;
         });
+        if (!found) {
+          temp.levels.push({
+            level: currentLevel,
+            time: currentTime,
+            steps: moves,
+            sablierTimeCollected: collectedTime,
+            tokensCollected: tokenToStream,
+          });
+        }
         currentTime += baseTimeAdder;
         localStorage.setItem("player", JSON.stringify(temp));
         difficulty += difficultyIncrementor;
+        //  stopRecording();
         makeMaze();
         console.log("currentTime: ", currentTime);
         timer.start(currentTime);
@@ -675,7 +859,14 @@ function Player(maze, c, _cellsize, onComplete, sprite = null) {
   };
   var cellSize = _cellsize;
   var halfCellSize = cellSize / 2;
-
+  $("#button").on("click", (e) => {
+    timer.pause();
+    console.log("in button");
+    getUserAddress(moves);
+  });
+  this.getMoves = function() {
+    return moves;
+  };
   this.redrawPlayer = function(_cellsize) {
     cellSize = _cellsize;
     drawSpriteImg(cellCoords);
@@ -729,6 +920,7 @@ function Player(maze, c, _cellsize, onComplete, sprite = null) {
       currentTime += bonusTime;
       collectedTime += bonusTimeCollected;
       var time = getDuration(collectedTime);
+      resetLabels(true);
       document.getElementById("tokensCollected").innerHTML =
         " Tokens Collected: " + tokenToStream;
       document.getElementById("timeCollected").innerHTML =
@@ -876,6 +1068,8 @@ function Player(maze, c, _cellsize, onComplete, sprite = null) {
 
 var mazeCanvas = document.getElementById("mazeCanvas");
 var ctx = mazeCanvas.getContext("2d");
+console.log("ctx onject: ", ctx, mazeCanvas);
+
 var sprite;
 var finishSprite;
 var timerSprite;
@@ -902,8 +1096,11 @@ window.onload = function() {
   var isComplete = () => {
     if (completeOne && completeTwo && completeThree) {
       console.log("Runs");
-      setTimeout(function() {
+      setTimeout(async function() {
+        //setUpRecorder();
+        // await initRecorder()
         makeMaze();
+        //startRecording();
       }, 500);
     }
   };
@@ -961,6 +1158,18 @@ window.onresize = function() {
     player.redrawPlayer(cellSize);
   }
 };
+
+function resetLabels(show) {
+  if (show) {
+    $("#tokensCollected").removeClass("hidden");
+    $("#timeCollected").removeClass("hidden");
+    $("#tokensCollected").removeClass("show");
+    $("#timeCollected").removeClass("show");
+  } else {
+    $("#tokensCollected").addClass("hidden");
+    $("#timeCollected").addClass("hidden");
+  }
+}
 
 function makeMaze() {
   currentLevel++;
