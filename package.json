@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "embark test",
-    "start": "cross-env && embark reset && embark run --nodashboard"
+    "start": "cross-env && embark reset && embark run --nodashboard",
+    "binance": "cross-env && embark reset && embark build binance"
   },
   "keywords": [],
   "author": "",
@@ -29,8 +30,10 @@
     "sass-loader": "^10.1.0"
   },
   "dependencies": {
+    "@binance-chain/javascript-sdk": "^4.1.1",
     "@maticnetwork/maticjs": "^2.0.15",
     "@nebulous/skynet": "^2.0.1",
+    "axios": "^0.21.0",
     "bignumber.js": "^9.0.1",
     "bs-stepper": "^1.7.0",
     "cross-env": "^7.0.3",

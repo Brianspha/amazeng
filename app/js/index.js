@@ -43,10 +43,8 @@ matic.initialize();
 console.log("matic: ", matic);
 
 */
-EmbarkJS.enableEthereum();
-
+var userAddress = "";
 var recordedBlobs = [];
-var ownerAddress = "0x5F03294478c1184e38fefB2A6C088840D4aAFD25";
 console.log("GAME_KEY: ", process.env.GAME_KEY);
 var difficultyIncrementor = 2;
 var level = 15;
@@ -59,8 +57,12 @@ var tokenToStream = 0;
 let stream, recorder;
 var canRecord = false;
 var mediaRecorder = {};
-localStorage.setItem("player", JSON.stringify({ levels: [], address: "" }));
-var bonusCollected = false;
+localStorage.setItem(
+  "player",
+  JSON.stringify({ userID: "", levels: [], address: "" })
+);
+var bonusCollected = false,
+  bonusCollected1 = false;
 document.getElementById("level").innerHTML =
   "Current Level: " + currentLevel.toString();
 document.getElementById("time").innerHTML =
@@ -78,7 +80,6 @@ timer.on("tick", (ms) => {
 });
 timer.on("done", () => console.log("done!"));
 timer.on("statusChanged", (status) => console.log("status:", status));
-timer.start(currentTime);
 /*=========================================== functions start=========================================== */
 
 async function initRecorder() {}
@@ -167,8 +168,12 @@ function startRecording() {
   //mediaRecorder.start();
 }
 
-window.ethereum.on("accountsChanged", function(accounts) {});
-window.ethereum.on("networkChanged", function(netId) {});
+window.ethereum.on("accountsChanged", function(accounts) {
+  //window.location.href = "index.html";
+});
+window.ethereum.on("networkChanged", function(netId) {
+  // window.location.href = "index.html";
+});
 console.log('$("#button"): ', $("#button"));
 function error(message) {
   swal
@@ -180,7 +185,7 @@ function error(message) {
       confirmButtonText: `To Menu`,
     })
     .then((result) => {
-      location.reload();
+      window.location.href = "index.html";
     });
 }
 function showGameOver(address) {
@@ -208,7 +213,7 @@ function showGameOver(address) {
     });
 }
 function restart() {
-  location.reload();
+  window.location.href = "index.html";
 }
 function successWithFooter(message, address) {
   swal
@@ -283,19 +288,6 @@ function startTokenStream(userAddress, moves) {
   console.log("user token payout: ", amount);
   console.log("timeDelta: ", timeDelta, " endDate: ", endDate);
   console.log("sablier", sablier);
-  console.log(
-    `userAddress,
-  amount,
-  ERC20.options.address,
-  tempStartTime,
-  endDate, ownerAddress: `,
-    userAddress,
-    amount,
-    ERC20.options.address,
-    tempStartTime,
-    endDate,
-    ownerAddress
-  );
   Amazeng.methods
     .startStream(amount, tempStartTime, endDate)
     .send({
@@ -310,6 +302,7 @@ function startTokenStream(userAddress, moves) {
         );
 
         var temp = JSON.parse(localStorage.getItem("player"));
+        temp.userID = userAddress;
         var found = false;
         temp.levels = temp.levels.map((level) => {
           if (level.level === currentLevel) {
@@ -495,6 +488,7 @@ function levelCompleted(moves) {
     .then(async (result) => {
       if (result.isConfirmed) {
         var temp = JSON.parse(localStorage.getItem("player"));
+        temp.userID = userAddress;
         var found = false;
         temp.levels = temp.levels.map((level) => {
           if (level.level === currentLevel) {
@@ -532,7 +526,7 @@ function Maze(Width, Height) {
   var mazeMap;
   var width = Width;
   var height = Height;
-  var startCoord, endCoord, randCoord;
+  var startCoord, endCoord, randCoord, randCoord2;
   var dirs = ["n", "s", "e", "w"];
   var modDir = {
     n: {
@@ -566,6 +560,9 @@ function Maze(Width, Height) {
   };
   this.endCoord = function() {
     return endCoord;
+  };
+  this.randCoord1 = function() {
+    return randCoord2;
   };
   this.randCoord = function() {
     return randCoord;
@@ -648,22 +645,8 @@ function Maze(Width, Height) {
   }
 
   function defineStartEnd() {
-    var toss = Math.round(Math.random() * 10293891083);
-    if (toss % 2 === 0) {
-      randCoord = {
-        x: Math.round(Math.random() * height),
-        y: Math.round(Math.random() * width),
-      };
-    } else {
-      randCoord = {
-        x: -1,
-        y: -1,
-      };
-    }
-    randCoord = {
-      x: Math.round(Math.random() * height),
-      y: Math.round(Math.random() * width),
-    };
+    randCoord = toss();
+    randCoord2 = toss();
     switch (rand(4)) {
       case 0:
         startCoord = {
@@ -712,6 +695,21 @@ function Maze(Width, Height) {
   var mazeMap = genMap();
   defineStartEnd();
   defineMaze();
+
+  function toss() {
+    var rand = Math.round(Math.random() * 10293891083);
+    if (rand % 2 === 0) {
+      return {
+        x: Math.round(Math.random() * height),
+        y: Math.round(Math.random() * width),
+      };
+    } else {
+      return {
+        x: -1,
+        y: -1,
+      };
+    }
+  }
 }
 
 function DrawMaze(Maze, ctx, cellsize, endSprite, timerSprite) {
@@ -813,6 +811,24 @@ function DrawMaze(Maze, ctx, cellsize, endSprite, timerSprite) {
     var offsetLeft = cellSize / 50;
     var offsetRight = cellSize / 25;
     var coord = Maze.randCoord();
+    console.log("coord: ", coord);
+    ctx.drawImage(
+      timerSprite,
+      2,
+      2,
+      timerSprite.width,
+      timerSprite.height,
+      coord.x * cellSize + offsetLeft,
+      coord.y * cellSize + offsetLeft,
+      cellSize - offsetRight,
+      cellSize - offsetRight
+    );
+  }
+  function drawTimerSprite2() {
+    var offsetLeft = cellSize / 50;
+    var offsetRight = cellSize / 25;
+    var coord = Maze.randCoord1();
+    console.log("coord: ", coord);
     ctx.drawImage(
       timerSprite,
       2,
@@ -836,14 +852,17 @@ function DrawMaze(Maze, ctx, cellsize, endSprite, timerSprite) {
     drawEndMethod = drawEndFlag;
   }
   clear();
-  if (Maze.randCoord().x > 0) {
+  if (Maze.randCoord().x >= 0) {
     drawTimerSprite();
+  }
+  if (Maze.randCoord1().x >= 0) {
+    drawTimerSprite2();
   }
   drawMap();
   drawEndMethod();
 }
 
-function Player(maze, c, _cellsize, onComplete, sprite = null) {
+function Player(maze, c, _cellsize, onComplete, sprite) {
   var ctx = c.getContext("2d");
   var drawSprite;
   var moves = 0;
@@ -888,9 +907,12 @@ function Player(maze, c, _cellsize, onComplete, sprite = null) {
       player.unbindKeyDown();
     }
     if (
-      coord.x !== -1 &&
-      coord.x === maze.randCoord().x &&
-      coord.y === maze.randCoord().y
+      (coord.x !== -1 &&
+        coord.x === maze.randCoord().x &&
+        coord.y === maze.randCoord().y) ||
+      (coord.x !== -1 &&
+        coord.x === maze.randCoord1().x &&
+        coord.y === maze.randCoord1().y)
     ) {
       bonusTime();
       console.log("collected collectible");
@@ -913,6 +935,13 @@ function Player(maze, c, _cellsize, onComplete, sprite = null) {
   function bonusTime() {
     if (!bonusCollected) {
       bonusCollected = true;
+      processCollection();
+    }
+    if (!bonusCollected1) {
+      bonusCollected1 = true;
+      processCollection();
+    }
+    function processCollection() {
       var bonusTimeCollected = Math.round(Math.random() * 604800000);
       var bonusTime = Math.round(Math.random() * 61000);
       console.log("bonusTime: ", bonusTime);
@@ -932,7 +961,6 @@ function Player(maze, c, _cellsize, onComplete, sprite = null) {
     timer.stop();
     timer.start(currentTime);
   }
-
   function drawSpriteImg(coord) {
     var offsetLeft = cellSize / 50;
     var offsetRight = cellSize / 25;
@@ -953,9 +981,12 @@ function Player(maze, c, _cellsize, onComplete, sprite = null) {
       player.unbindKeyDown();
     }
     if (
-      coord.x !== -1 &&
-      coord.x === maze.randCoord().x &&
-      coord.y === maze.randCoord().y
+      (coord.x !== -1 &&
+        coord.x === maze.randCoord().x &&
+        coord.y === maze.randCoord().y) ||
+      (coord.x !== -1 &&
+        coord.x === maze.randCoord1().x &&
+        coord.y === maze.randCoord1().y)
     ) {
       bonusTime();
       console.log("collected collectible");
@@ -1069,6 +1100,8 @@ function Player(maze, c, _cellsize, onComplete, sprite = null) {
 var mazeCanvas = document.getElementById("mazeCanvas");
 var ctx = mazeCanvas.getContext("2d");
 console.log("ctx onject: ", ctx, mazeCanvas);
+ctx.fillStyle = "transparent";
+ctx.clearRect(0, 0, mazeCanvas.width, mazeCanvas.height);
 
 var sprite;
 var finishSprite;
@@ -1079,67 +1112,96 @@ var difficulty;
 // sprite.src = 'media/sprite.png';
 
 window.onload = function() {
-  let viewWidth = $("#view").width();
-  let viewHeight = $("#view").height();
-  if (viewHeight < viewWidth) {
-    ctx.canvas.width = viewHeight - viewHeight / 100;
-    ctx.canvas.height = viewHeight - viewHeight / 100;
-  } else {
-    ctx.canvas.width = viewWidth - viewWidth / 100;
-    ctx.canvas.height = viewWidth - viewWidth / 100;
-  }
-
-  //Load and edit sprites
-  var completeOne = false;
-  var completeTwo = false;
-  var completeThree = false;
-  var isComplete = () => {
-    if (completeOne && completeTwo && completeThree) {
-      console.log("Runs");
-      setTimeout(async function() {
-        //setUpRecorder();
-        // await initRecorder()
-        makeMaze();
-        //startRecording();
-      }, 500);
+  showLoading();
+  let currentWeb3;
+  if (window.ethereum) {
+    currentWeb3 = new Web3(window.ethereum);
+    try {
+      // Request account access if needed
+      EmbarkJS.enableEthereum()
+        .then((results) => {
+          console.log("metaenabled: ", results);
+          userAddress = results[0];
+          let viewWidth = $("#view").width();
+          let viewHeight = $("#view").height();
+          if (viewHeight < viewWidth) {
+            ctx.canvas.width = viewHeight - viewHeight / 100;
+            ctx.canvas.height = viewHeight - viewHeight / 100;
+          } else {
+            ctx.canvas.width = viewWidth - viewWidth / 100;
+            ctx.canvas.height = viewWidth - viewWidth / 100;
+          }
+          //Load and edit sprites
+          var completeOne = false;
+          var completeTwo = false;
+          var completeThree = false;
+          var isComplete = () => {
+            if (completeOne && completeTwo && completeThree) {
+              console.log("Runs");
+              setTimeout(async function() {
+                //setUpRecorder();
+                // await initRecorder()
+                makeMaze();
+                //startRecording();
+                hideLoading();
+                timer.start(currentTime);
+              }, 500);
+            }
+          };
+          sprite = new Image();
+          timerSprite = new Image();
+          sprite.src = "https://i.ibb.co/0mcvD4J/5c8e54a4893930029d46f81b.png";
+          sprite.setAttribute("crossOrigin", " ");
+          sprite.onload = function() {
+            sprite = changeBrightness(1.2, sprite);
+            console.log("playerSprite: ", sprite);
+            completeOne = true;
+            console.log(completeOne);
+            isComplete();
+          };
+          timerSprite.src =
+            "https://i.ibb.co/XZdfxjT/coin-clipart-drawn-17.gif";
+          timerSprite.setAttribute("crossOrigin", " ");
+          timerSprite.onload = function() {
+            timerSprite = changeBrightness(1.2, timerSprite);
+            completeThree = true;
+            console.log(completeThree);
+            isComplete();
+          };
+          finishSprite = new Image();
+          finishSprite.src =
+            "https://i.ibb.co/FBdnzhr/tumblr-nce3mk-RXbx1rftvj7o1-400.gif";
+          finishSprite.setAttribute("crossOrigin", " ");
+          finishSprite.onload = function() {
+            finishSprite = changeBrightness(1.1, finishSprite);
+            completeTwo = true;
+            console.log(completeTwo);
+            isComplete();
+          };
+        })
+        .catch((error) => {
+          console.log("user rejected metamask request");
+          error("Please allow access for the app to work");
+        });
+      window.web3 = new Web3(web3.currentProvider);
+      userAddress = web3.eth.defaultAccount;
+      console.log("userAddress: ", userAddress);
+      // Acccounts now exposed
+    } catch (error) {
+      // User denied account access...
+      console.log("user rejected metamask request");
+      error("Please allow access for the app to work");
     }
-  };
-  var sprite = new Image();
-  timerSprite = new Image();
-  timerSprite.src =
-    "https://image.ibb.co/dr1HZy/Pf_RWr3_X_Imgur.png" +
-    "?" +
-    new Date().getTime();
-  sprite.src =
-    "https://image.ibb.co/dr1HZy/Pf_RWr3_X_Imgur.png" +
-    "?" +
-    new Date().getTime();
-  sprite.setAttribute("crossOrigin", " ");
-  sprite.onload = function() {
-    sprite = changeBrightness(1.2, sprite);
-    completeOne = true;
-    console.log(completeOne);
-    isComplete();
-  };
-  timerSprite.setAttribute("crossOrigin", " ");
-  timerSprite.onload = function() {
-    timerSprite = changeBrightness(1.2, sprite);
-    completeThree = true;
-    console.log(completeThree);
-    isComplete();
-  };
-  finishSprite = new Image();
-  finishSprite.src =
-    "https://image.ibb.co/b9wqnJ/i_Q7m_U25_Imgur.png" +
-    "?" +
-    new Date().getTime();
-  finishSprite.setAttribute("crossOrigin", " ");
-  finishSprite.onload = function() {
-    finishSprite = changeBrightness(1.1, finishSprite);
-    completeTwo = true;
-    console.log(completeTwo);
-    isComplete();
-  };
+  } else if (window.web3) {
+    window.web3 = new Web3(web3.currentProvider);
+  } else {
+    console.log(
+      "Non-Ethereum browser detected. You should consider trying MetaMask!"
+    );
+    error(
+      "Non-Ethereum browser detected. You should consider trying MetaMask!"
+    );
+  }
 };
 
 window.onresize = function() {
@@ -1182,10 +1244,53 @@ function makeMaze() {
   }
   bonusCollected = false;
   cellSize = mazeCanvas.width / difficulty;
+  console.log("sprite: ", sprite, " timerSprite: ", timerSprite);
   maze = new Maze(difficulty, difficulty);
   draw = new DrawMaze(maze, ctx, cellSize, finishSprite, timerSprite);
   player = new Player(maze, mazeCanvas, cellSize, levelCompleted, sprite);
   if (document.getElementById("mazeContainer").style.opacity < "100") {
     document.getElementById("mazeContainer").style.opacity = "100";
   }
+}
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+document.addEventListener(
+  "keydown",
+  function(e) {
+    //document.onkeydown = function(e) {
+    // "I" key
+    if (e.ctrlKey && e.shiftKey && e.code == 73) {
+      disabledEvent(e);
+    }
+    // "J" key
+    if (e.ctrlKey && e.shiftKey && e.code == 74) {
+      disabledEvent(e);
+    }
+    // "S" key + macOS
+    if (
+      e.code == 83 &&
+      (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)
+    ) {
+      disabledEvent(e);
+    }
+    // "U" key
+    if (e.ctrlKey && e.code == 85) {
+      disabledEvent(e);
+    }
+    // "F12" key
+    if (e.code == 123) {
+      disabledEvent(e);
+    }
+  },
+  false
+);
+function disabledEvent(e) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  } else if (window.event) {
+    window.event.cancelBubble = true;
+  }
+  e.preventDefault();
+  return false;
 }

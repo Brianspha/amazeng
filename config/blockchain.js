@@ -1,5 +1,10 @@
-require("dotenv").config({ path: "./vars/vars.env" });
-console.log('process.env.BINANCE_PROVIDER_URL: ',process.env.BINANCE_PROVIDER_URL)
+require("dotenv").config();
+console.log(
+  "process.env.BINANCE_PROVIDER_URL: ",
+  process.env.BINANCE_PROVIDER_URL,
+  " process.env.MNEUNOMIC: ",
+  process.env.MNEUNOMIC_BINANCE
+);
 // This file contains only the basic configuration you need to run Embark's node
 // For additional configurations, see: https://framework.embarklabs.io/docs/blockchain_configuration.html
 module.exports = {
@@ -67,21 +72,9 @@ module.exports = {
     endpoint: process.env.BINANCE_PROVIDER_URL,
     accounts: [
       {
-        mnemonic: process.env.MNEUNOMIC,
-        hdpath: "m/44'/60'/0'/0/",
-        numAddresses: "1",
+        mnemonic: process.env.MNEUNOMIC_BINANCE,
       },
-    ]
-  },
-  binance: {
-    endpoint: "https://data-seed-prebsc-1-s1.binance.org:8545",
-    accounts: [
-      {
-        mnemonic: process.env.MNEUNOMIC,
-        hdpath: "m/44'/60'/0'/0/",
-        numAddresses: "1",
-      },
-    ]
+    ],
   },
   livenet: {
     networkType: "livenet",

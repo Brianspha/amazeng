@@ -143,7 +143,7 @@ select:focus {
   width: 100vw;
   height: 100vh;
   color: #fff;
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background: linear-gradient(-45deg, #5c5959, #646161, #9e9fa0, #6c6e6e);
   background-size: 400% 400%;
   -webkit-animation: Gradient 15s ease infinite;
   animation: Gradient 15s ease infinite;
@@ -350,26 +350,6 @@ select:focus {
 /***** Game Frame *****/
 .game-frame {
   display: block;
-}
-.button3 {
-  background-color: white;
-  color: black;
-  border: 2px solid #f44336;
-}
-
-.button3:hover {
-  background-color: #f44336;
-  color: white;
-}
-.button3 {
-  background-color: white;
-  color: black;
-  border: 2px solid #f44336;
-}
-
-.button3:hover {
-  background-color: #f44336;
-  color: white;
 }
 .show{
   display: block;

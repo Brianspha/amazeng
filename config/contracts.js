@@ -90,6 +90,7 @@ module.exports = {
   development: {},
   binance:{
     deploy: {
+      gas: '6000000',
       strategy: "implicit",
       deploy: {
         Amazeng: {
