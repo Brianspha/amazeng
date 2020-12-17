@@ -76,6 +76,48 @@ module.exports = {
       },
     },
   },
+  development: {
+    gas: "6000000",
+    strategy: "explicit",
+    deploy: {
+      Amazeng: {
+        deps: ["ERC20", "Sablier"],
+        onDeploy: async ({ contracts, web3, logger }) => {
+          console.log("contracts: ", web3.eth.defaultAccount);
+          await contracts.Amazeng.methods
+            .init(
+              contracts.ERC20.options.address,
+              contracts.Sablier.options.address
+            )
+            .send({
+              gas: 800000,
+            });
+          await contracts.ERC20.methods
+            .approve(contracts.Amazeng.options.address, intialAmount)
+            .send({
+              gas: 800000,
+            });
+          await contracts.ERC20.methods
+            .transfer(contracts.Amazeng.options.address, intialAmount)
+            .send({
+              gas: 800000,
+            });
+
+          console.log("approved Amazeng contract...");
+        },
+      },
+      ERC20: {
+        args: ["AmazengToken", "AT", 18, intialAmount],
+      },
+      CTokenManager: {
+        args: [],
+      },
+      Sablier: {
+        deps: ["ERC20"],
+        args: ["$CTokenManager"],
+      },
+    },
+  },
   // default environment, merges with the settings in default
   // assumed to be the intended environment by `embark run`
 

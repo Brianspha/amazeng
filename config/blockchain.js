@@ -10,9 +10,9 @@ module.exports = {
   },
 
   development: {
-    clientConfig: {
-      miningMode: "auto", // Mode in which the node mines. Options: dev, auto, always, off
-    },
+    rpcHost: "http://localhost:8546",
+    rpcPort: "8545",
+    endpoint:"http://localhost"
   },
   // default applies to all environments
   binance: {
