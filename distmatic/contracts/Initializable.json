@@ -1,0 +1,31 @@
+{
+  "abiDefinition": [],
+  "className": "Initializable",
+  "args": [],
+  "gas": "6000000",
+  "silent": false,
+  "track": true,
+  "deploy": false,
+  "realRuntimeBytecode": "6080604052600080fdfea265627a7a7230582042fb42aaaa15d1428c",
+  "realArgs": [],
+  "code": "6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a7230582042fb42aaaa15d1428c02e5f44936672fc64843d224d59a83cfd083f20944fc1b64736f6c634300050a0032",
+  "runtimeBytecode": "6080604052600080fdfea265627a7a7230582042fb42aaaa15d1428c02e5f44936672fc64843d224d59a83cfd083f20944fc1b64736f6c634300050a0032",
+  "linkReferences": {},
+  "swarmHash": "02e5f44936672fc64843d224d59a83cfd083f20944fc1b64736f6c634300050a",
+  "gasEstimates": {
+    "creation": {
+      "codeDepositCost": "12400",
+      "executionCost": "66",
+      "totalCost": "12466"
+    },
+    "internal": {
+      "isConstructor()": "infinite"
+    }
+  },
+  "functionHashes": {},
+  "filename": "/Users/powerbite/Documents/myrepos/amazeng/.embark/node_modules/@openzeppelin/upgrades/contracts/Initializable.sol",
+  "originalFilename": "contracts//Users/powerbite/Documents/myrepos/amazeng/.embark/node_modules/@openzeppelin/upgrades/contracts/Initializable.sol",
+  "path": "/Users/powerbite/Documents/myrepos/amazeng/contracts/.embark/node_modules/@openzeppelin/upgrades/contracts/Initializable.sol",
+  "type": "file",
+  "deploymentAccount": "0xbd6581FBDc3d3f42B44A1f1416ee5c2a5B7b85f6"
+}

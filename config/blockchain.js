@@ -1,4 +1,5 @@
 require("dotenv").config();
+console.log("MATIC_PROVIDER_URL: ", process.env.MATIC_PROVIDER_URL);
 // This file contains only the basic configuration you need to run Embark's node
 // For additional configurations, see: https://framework.embarklabs.io/docs/blockchain_configuration.html
 module.exports = {
@@ -12,7 +13,7 @@ module.exports = {
   development: {
     rpcHost: "http://localhost:8546",
     rpcPort: "8545",
-    endpoint:"http://localhost"
+    endpoint: "http://localhost",
   },
   // default applies to all environments
   binance: {
@@ -22,6 +23,14 @@ module.exports = {
     accounts: [
       {
         privateKey: process.env.P_KEY,
+      },
+    ],
+  },
+  matic: {
+    endpoint: process.env.MATIC_PROVIDER_URL,
+    accounts: [
+      {
+        privateKey: process.env.P_KEY_GOERLI
       },
     ],
   },

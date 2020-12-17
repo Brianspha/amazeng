@@ -1,0 +1,38 @@
+{
+  "abiDefinition": [],
+  "className": "SafeMath",
+  "args": [],
+  "gas": "auto",
+  "silent": false,
+  "track": true,
+  "deploy": false,
+  "realRuntimeBytecode": "73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72305820d0d61c746ecb82874b",
+  "realArgs": [],
+  "code": "60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72305820d0d61c746ecb82874bb5a278d3eaa696c613deeb6c1666c0e38869052ce495c864736f6c634300050a0032",
+  "runtimeBytecode": "73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72305820d0d61c746ecb82874bb5a278d3eaa696c613deeb6c1666c0e38869052ce495c864736f6c634300050a0032",
+  "linkReferences": {},
+  "swarmHash": "b5a278d3eaa696c613deeb6c1666c0e38869052ce495c864736f6c634300050a",
+  "gasEstimates": {
+    "creation": {
+      "codeDepositCost": "17000",
+      "executionCost": "94",
+      "totalCost": "17094"
+    },
+    "internal": {
+      "add(uint256,uint256)": "infinite",
+      "div(uint256,uint256)": "infinite",
+      "div(uint256,uint256,string memory)": "infinite",
+      "mod(uint256,uint256)": "infinite",
+      "mod(uint256,uint256,string memory)": "infinite",
+      "mul(uint256,uint256)": "infinite",
+      "sub(uint256,uint256)": "infinite",
+      "sub(uint256,uint256,string memory)": "infinite"
+    }
+  },
+  "functionHashes": {},
+  "filename": "/Users/powerbite/Documents/myrepos/amazeng/.embark/node_modules/@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol",
+  "originalFilename": "contracts//Users/powerbite/Documents/myrepos/amazeng/.embark/node_modules/@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol",
+  "path": "/Users/powerbite/Documents/myrepos/amazeng/contracts/.embark/node_modules/@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol",
+  "type": "file",
+  "deploymentAccount": "0xF652FcF94b5BbDCAC3BF508c6453Cca69bB4213A"
+}
