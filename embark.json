@@ -26,7 +26,7 @@
   "options": {
     "solc": {
       "optimize": true,
-      "optimize-runs": 200
+      "optimize-runs": 2000
     }
   },
   "generationDir": "embarkArtifacts"

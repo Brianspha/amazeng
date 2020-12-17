@@ -4,12 +4,10 @@ import { SkynetClient, genKeyPairFromSeed } from "skynet-js";
 import swal from "sweetalert2";
 
 /*=========================================== variables start=========================================== */
-console.log("APP_SKYNET_SECRET: ", process.env.APP_SKYNET_SECRET);
 var appSecret =
-  "askdjlaksdj klajdk12312dasd1212ads la sjdl111kasj1dk11lasdjda1ja   asdh1012293 jkasldkja oduaj idjaslkdja lskdjlak sdj";
+"askdjlaksdj klajdasdasdk12312dasdasdad1212ads la sjdl111kasj1dk11lasdjda1ja   asdh1012293 jkasldkja oduaj idjaslkdja lskdjlak sdj";
 
 const { publicKey, privateKey } = genKeyPairFromSeed(appSecret);
-console.log("privateKey: ", privateKey, " publicKey: ", publicKey);
 const client = new SkynetClient("https://siasky.net/");
 var revision = 0;
 var SELECTOR_REPLAY_INTRO_BUTTONS = "#button-replay";
@@ -17,6 +15,7 @@ var SELECTOR_BUTTON_NEWGAME = ".button-newgame";
 var SELECTOR_BUTTON_GAME_MENU = ".button-game-menu";
 var SELECTOR_BUTTON_LEADERBOARD = ".button-leaderboard";
 var SELECTOR_BUTTON_CREDITS = ".button-credits";
+var SELECTOR_BUTTON_ABOUT = ".button-about";
 
 var timelineIntroScreen;
 /*=========================================== functions start=========================================== */
@@ -121,6 +120,14 @@ $(document).on("click", SELECTOR_BUTTON_LEADERBOARD, function(event) {
     fadeToScreen("screen-leaderboard");
   });
 });
+$(document).on("click", SELECTOR_BUTTON_ABOUT, function(event) {
+    event.preventDefault();
+    reverseIntroButtons();
+  
+    timelineIntroScreen.eventCallback("onReverseComplete", function() {
+      fadeToScreen("screen-about");
+    });
+  });
 $(document).on("click", SELECTOR_BUTTON_CREDITS, function(event) {
   event.preventDefault();
   reverseIntroButtons();

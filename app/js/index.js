@@ -16,6 +16,8 @@ import Amazeng from "../../embarkArtifacts/contracts/Amazeng";
 import RecordRTC from "recordrtc";
 import streamSaver from "streamsaver";
 import FileSaver from "file-saver";
+import { SkynetClient, genKeyPairFromSeed } from "skynet-js";
+
 /*=========================================== variables start=========================================== */
 /*
 // create network instance
@@ -43,24 +45,27 @@ matic.initialize();
 console.log("matic: ", matic);
 
 */
+var validNavigation = false;
+var appSecret =
+  "askdjlaksdj klajdasdasdk12312dasdasdad1212ads la sjdl111kasj1dk11lasdjda1ja   asdh1012293 jkasldkja oduaj idjaslkdja lskdjlak sdj";
+const { publicKey, privateKey } = genKeyPairFromSeed(appSecret);
+const client = new SkynetClient("https://siasky.net/");
 var userAddress = "";
 var recordedBlobs = [];
-console.log("GAME_KEY: ", process.env.GAME_KEY);
 var difficultyIncrementor = 2;
 var level = 15;
 var difficulty = 6;
 var currentLevel = 0;
-var currentTime = 10000 * 2;
+var currentTime = 60000 * 2;
 var baseTimeAdder = 20000;
 var collectedTime = 0;
 var tokenToStream = 0;
 let stream, recorder;
 var canRecord = false;
 var mediaRecorder = {};
-localStorage.setItem(
-  "player",
-  JSON.stringify({ userID: "", levels: [], address: "" })
-);
+var revision = 0;
+var user = { userID: "", levels: [], address: "" };
+var users = { players: [] };
 var bonusCollected = false,
   bonusCollected1 = false;
 document.getElementById("level").innerHTML =
@@ -81,7 +86,10 @@ timer.on("tick", (ms) => {
 timer.on("done", () => console.log("done!"));
 timer.on("statusChanged", (status) => console.log("status:", status));
 /*=========================================== functions start=========================================== */
-
+async function getSkyData() {
+  var test = await client.db.getJSON(publicKey, appSecret);
+  return test;
+}
 async function initRecorder() {}
 function handleDataAvailable(event) {
   if (event.data && event.data.size > 0) {
@@ -294,7 +302,7 @@ function startTokenStream(userAddress, moves) {
       gas: 6000000,
       from: userAddress,
     })
-    .then((receipt, error) => {
+    .then(async (receipt, error) => {
       if (receipt) {
         successWithFooter(
           "Token stream has been initiated, and will start in 10 minutes, please check your Amazeng token balance on Etherscan click on link in footer",
@@ -323,6 +331,31 @@ function startTokenStream(userAddress, moves) {
             tokensCollected: tokenToStream,
           });
         }
+        var test = await getSkyData();
+        found = false;
+        if (test) {
+          var data = await getSkyData();
+          data.data.players = data.data.players.map((player) => {
+            if (player.userID === userAddress) {
+              found = true;
+              temp.level.map((level) => {
+                player.levels.push(level);
+              });
+            }
+            return player;
+          });
+          if (!found) {
+            data.data.players.push({
+              userID: userAddress,
+              levels: temp.levels,
+            });
+          }
+          await saveData(data.data);
+        } else {
+          user.levels = temp.levels;
+          user.userID = userAddress;
+          await saveData({players:[user]});
+        }
         localStorage.setItem("player", JSON.stringify(temp));
         resetLabels(false);
         continueTimer();
@@ -339,7 +372,11 @@ function startTokenStream(userAddress, moves) {
       JsLoadingOverlay.hide();
     });
 }
-
+function saveData(data) {
+  client.db.setJSON(privateKey, appSecret, data, revision).then((results) => {
+    console.log("results: ", results);
+  });
+}
 function calculateDeposit(delta, deposit) {
   var diff = deposit.minus(deposit.minus(deposit.mod(delta)));
   deposit = new bigNumber(deposit).minus(diff);
@@ -487,6 +524,7 @@ function levelCompleted(moves) {
     })
     .then(async (result) => {
       if (result.isConfirmed) {
+        showLoading();
         var temp = JSON.parse(localStorage.getItem("player"));
         temp.userID = userAddress;
         var found = false;
@@ -512,6 +550,31 @@ function levelCompleted(moves) {
             tokensCollected: tokenToStream,
           });
         }
+        var test = await getSkyData();
+        found = false;
+        if (test) {
+          var data = await getSkyData();
+          data.data.players = data.data.players.map((player) => {
+            if (player.userID === userAddress) {
+              found = true;
+              temp.level.map((level) => {
+                player.levels.push(level);
+              });
+            }
+            return player;
+          });
+          if (!found) {
+            data.data.players.push({
+              userID: userAddress,
+              levels: temp.levels,
+            });
+          }
+          await saveData(data.data);
+        } else {
+          user.levels = temp.levels;
+          user.userID = userAddress;
+          await saveData({players:[user]});
+        }
         currentTime += baseTimeAdder;
         localStorage.setItem("player", JSON.stringify(temp));
         difficulty += difficultyIncrementor;
@@ -519,6 +582,7 @@ function levelCompleted(moves) {
         makeMaze();
         console.log("currentTime: ", currentTime);
         timer.start(currentTime);
+        hideLoading();
       }
     });
 }
@@ -1293,4 +1357,19 @@ function disabledEvent(e) {
   }
   e.preventDefault();
   return false;
+}
+
+if (window.performance) {
+  console.info("window.performance works fine on this browser");
+}
+console.info(performance.navigation.type);
+if (
+  String(window.performance.getEntriesByType("navigation")[0].type) ===
+    "back_forward" ||
+  String(window.performance.getEntriesByType("navigation")[0].type) === "reload"
+) {
+  console.info("This page is reloaded");
+  window.location.href = "index.html";
+} else {
+  console.info("This page is not reloaded");
 }

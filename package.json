@@ -10,7 +10,9 @@
   "scripts": {
     "test": "embark test",
     "start": "cross-env && embark reset && embark run --nodashboard",
-    "binance": "cross-env && embark reset && embark build binance"
+    "binance": "cross-env && embark reset && embark build production binance",
+    "binanceprod": "cross-env && embark reset && embark run binance --nodashboard"
+
   },
   "keywords": [],
   "author": "",

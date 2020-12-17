@@ -3,18 +3,14 @@ const intialAmount = new bigNumber(9900000000000000000000 * 10 ** 18).toFixed();
 console.log("initialAmount: ", intialAmount);
 require("dotenv").config();
 console.log("process.env: ", process.env.GAME_KEY);
+const utils = require("web3-utils");
 module.exports = {
   // default applies to all environments
   default: {
     library: "embarkjs", // can also be 'web3'
 
     // order of connections the dapp should connect to
-    dappConnection: [
-      "$EMBARK",
-      "$WEB3", // uses pre existing web3 object if available (e.g in Mist)
-      "ws://localhost:8546",
-      "http://localhost:8545",
-    ],
+    dappConnection: ["$WEB3"],
 
     // Automatically call `ethereum.enable` if true.
     // If false, the following code must run before sending any transaction: `await EmbarkJS.enableEthereum();`
@@ -35,112 +31,53 @@ module.exports = {
     // Using filteredFields lets you customize which field you want to filter out of the contract file (requires minimalContractSize: true)
     // minimalContractSize: false,
     // filteredFields: [],
-
+    strategy: 'explicit',
+    deploy: {},
+  },
+  binance: {
+    gas: "6000000",
+    strategy: "explicit",
     deploy: {
-      strategy: "implicit",
-      deploy: {
-        Amazeng: {
-          deps: ["ERC20", "Sablier"],
-          onDeploy: async ({ contracts, web3, logger }) => {
-            console.log("contracts: ", web3.eth.defaultAccount);
-            await contracts.Amazeng.methods
-              .init(
-                contracts.ERC20.options.address,
-                contracts.Sablier.options.address
-              )
-              .send({
-                gas: 800000,
-              });
-              await contracts.ERC20.methods
-              .approve(
-                contracts.Amazeng.options.address,
-                intialAmount
-              )
-              .send({
-                gas: 800000,
-              });
-            await contracts.ERC20.methods
-              .transfer(
-                contracts.Amazeng.options.address,
-                intialAmount
-              )
-              .send({
-                gas: 800000,
-              });
+      Amazeng: {
+        deps: ["ERC20", "Sablier"],
+        onDeploy: async ({ contracts, web3, logger }) => {
+          console.log("contracts: ", web3.eth.defaultAccount);
+          await contracts.Amazeng.methods
+            .init(
+              contracts.ERC20.options.address,
+              contracts.Sablier.options.address
+            )
+            .send({
+              gas: 800000,
+            });
+          await contracts.ERC20.methods
+            .approve(contracts.Amazeng.options.address, intialAmount)
+            .send({
+              gas: 800000,
+            });
+          await contracts.ERC20.methods
+            .transfer(contracts.Amazeng.options.address, intialAmount)
+            .send({
+              gas: 800000,
+            });
 
-            console.log("approved Amazeng contract...");
-          },
+          console.log("approved Amazeng contract...");
         },
-        ERC20: {
-          args: ["AmazengToken", "AT", 18, intialAmount],
-        },
-        CTokenManager: {
-          args: [],
-        },
-        Sablier: {
-          deps: ["ERC20"],
-          args: ["$CTokenManager"],
-        },
+      },
+      ERC20: {
+        args: ["AmazengToken", "AT", 18, intialAmount],
+      },
+      CTokenManager: {
+        args: [],
+      },
+      Sablier: {
+        deps: ["ERC20"],
+        args: ["$CTokenManager"],
       },
     },
   },
-
   // default environment, merges with the settings in default
   // assumed to be the intended environment by `embark run`
-  development: {},
-  binance:{
-    deploy: {
-      gas: '6000000',
-      strategy: "implicit",
-      deploy: {
-        Amazeng: {
-          deps: ["ERC20", "Sablier"],
-          onDeploy: async ({ contracts, web3, logger }) => {
-            console.log("contracts: ", web3.eth.defaultAccount);
-            await contracts.Amazeng.methods
-              .init(
-                contracts.ERC20.options.address,
-                contracts.Sablier.options.address
-              )
-              .send({
-                gas: 800000,
-              });
-              await contracts.ERC20.methods
-              .approve(
-                contracts.Amazeng.options.address,
-                intialAmount
-              )
-              .send({
-                gas: 800000,
-              });
-            await contracts.ERC20.methods
-              .transfer(
-                contracts.Amazeng.options.address,
-                intialAmount
-              )
-              .send({
-                gas: 800000,
-              });
-
-            console.log("approved Amazeng contract...");
-          },
-        },
-        ERC20: {
-          args: ["AmazengToken", "AT", 18, intialAmount],
-        },
-        CTokenManager: {
-          args: [],
-        },
-        Sablier: {
-          deps: ["ERC20"],
-          args: ["$CTokenManager"],
-        },
-      },
-    }
-  },
-  // merges with the settings in default
-  // used with "embark run privatenet"
-  privatenet: {},
 
   // you can name an environment with specific settings and then specify with
   // "embark run custom_name" or "embark blockchain custom_name"
