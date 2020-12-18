@@ -13,7 +13,7 @@
     "game.html": "app/game.html",
     "index.html": "app/index.html"
   },
-  "buildDir": "distmatic/",
+  "buildDir": "dist/",
   "config": "config/",
   "versions": {
     "solc": "0.5.10"

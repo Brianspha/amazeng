@@ -47,7 +47,7 @@ console.log("matic: ", matic);
 */
 var validNavigation = false;
 var appSecret =
-  "askdjlaksdj klajdasdasdk12312dasdasdad1212ads la sjdl111kasj1dk11lasdjda1ja   asdh1012293 jkasldkja oduaj idjaslkdja lskdjlak sdj";
+"askdjlaksdj klajaAAAAaadasdasdk12312dasdasdad1212ads la sjdl111kasj1dk11lasdjda1ja   asdh1012293 jkasldkja oduaj idjaslkdja lskdjlak sdj";
 const { publicKey, privateKey } = genKeyPairFromSeed(appSecret);
 const client = new SkynetClient("https://siasky.net/");
 var userAddress = "";
@@ -177,10 +177,11 @@ function startRecording() {
 }
 
 window.ethereum.on("accountsChanged", function(accounts) {
-  //window.location.href = "index.html";
+  userAddress = accounts[0];
 });
 window.ethereum.on("networkChanged", function(netId) {
-  // window.location.href = "index.html";
+  userAddress = accounts[0];
+  window.location.reload();
 });
 console.log('$("#button"): ', $("#button"));
 function error(message) {
@@ -338,7 +339,7 @@ function startTokenStream(userAddress, moves) {
           data.data.players = data.data.players.map((player) => {
             if (player.userID === userAddress) {
               found = true;
-              temp.level.map((level) => {
+              temp.levels.map((level) => {
                 player.levels.push(level);
               });
             }
@@ -354,7 +355,7 @@ function startTokenStream(userAddress, moves) {
         } else {
           user.levels = temp.levels;
           user.userID = userAddress;
-          await saveData({players:[user]});
+          await saveData({ players: [user] });
         }
         localStorage.setItem("player", JSON.stringify(temp));
         resetLabels(false);
@@ -557,7 +558,7 @@ function levelCompleted(moves) {
           data.data.players = data.data.players.map((player) => {
             if (player.userID === userAddress) {
               found = true;
-              temp.level.map((level) => {
+              temp.levels.map((level) => {
                 player.levels.push(level);
               });
             }
@@ -573,7 +574,7 @@ function levelCompleted(moves) {
         } else {
           user.levels = temp.levels;
           user.userID = userAddress;
-          await saveData({players:[user]});
+          await saveData({ players: [user] });
         }
         currentTime += baseTimeAdder;
         localStorage.setItem("player", JSON.stringify(temp));
@@ -1316,6 +1317,26 @@ function makeMaze() {
     document.getElementById("mazeContainer").style.opacity = "100";
   }
 }
+function showCompatibilityError() {
+  swal
+    .fire({
+      title:
+        "Game is not playable on current network selected on metamask please switch to the Binance Smart Chain network",
+      confirmButtonText: `Close`,
+    })
+    .then((result) => {
+      window.location.reload();
+    });
+}
+web3.eth.net.getId((err, netId) => {
+  switch (netId) {
+    case "80001":
+      console.log("This is matic");
+      break;
+    default:
+      showCompatibilityError()
+  }
+});
 document.addEventListener("contextmenu", function(e) {
   e.preventDefault();
 });

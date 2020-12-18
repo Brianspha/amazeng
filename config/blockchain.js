@@ -7,13 +7,13 @@ module.exports = {
     warnIfMetamask: true,
 
     enabled: true,
-    client: "geth", // Can be geth or parity (default:geth)
+    client: "ganache-cli", // Can be geth or parity (default:geth)
   },
 
   development: {
-    rpcHost: "http://localhost:8546",
-    rpcPort: "8545",
-    endpoint: "http://localhost",
+    rpcHost: "http://localhost",
+    rpcPort: "8546",
+    endpoint: "http://localhost:8546",
   },
   // default applies to all environments
   binance: {

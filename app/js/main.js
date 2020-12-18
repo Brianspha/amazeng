@@ -5,7 +5,7 @@ import swal from "sweetalert2";
 
 /*=========================================== variables start=========================================== */
 var appSecret =
-"askdjlaksdj klajdasdasdk12312dasdasdad1212ads la sjdl111kasj1dk11lasdjda1ja   asdh1012293 jkasldkja oduaj idjaslkdja lskdjlak sdj";
+"askdjlaksdj klajaAAAAaadasdasdk12312dasdasdad1212ads la sjdl111kasj1dk11lasdjda1ja   asdh1012293 jkasldkja oduaj idjaslkdja lskdjlak sdj";
 
 const { publicKey, privateKey } = genKeyPairFromSeed(appSecret);
 const client = new SkynetClient("https://siasky.net/");
@@ -106,7 +106,7 @@ $(document).on("click", SELECTOR_REPLAY_INTRO_BUTTONS, function(event) {
 $(document).on("click", SELECTOR_BUTTON_NEWGAME, function(event) {
   event.preventDefault();
   reverseIntroButtons();
-  window.location.href= "game.html"
+  window.location.href = "game.html";
 
   timelineIntroScreen.eventCallback("onReverseComplete", function() {
     fadeToScreen("screen-game");
@@ -121,13 +121,13 @@ $(document).on("click", SELECTOR_BUTTON_LEADERBOARD, function(event) {
   });
 });
 $(document).on("click", SELECTOR_BUTTON_ABOUT, function(event) {
-    event.preventDefault();
-    reverseIntroButtons();
-  
-    timelineIntroScreen.eventCallback("onReverseComplete", function() {
-      fadeToScreen("screen-about");
-    });
+  event.preventDefault();
+  reverseIntroButtons();
+
+  timelineIntroScreen.eventCallback("onReverseComplete", function() {
+    fadeToScreen("screen-about");
   });
+});
 $(document).on("click", SELECTOR_BUTTON_CREDITS, function(event) {
   event.preventDefault();
   reverseIntroButtons();
@@ -143,6 +143,7 @@ $(document).on("click", SELECTOR_BUTTON_GAME_MENU, function(event) {
   playIntroButtons();
 });
 async function init() {
+  var playerLimit = 5;
   showLoading();
   var test = await getSkyData();
   var data = { players: [] };
@@ -168,10 +169,14 @@ async function init() {
     });
     revision = data.revision;
     $("#list").empty();
+    var count = 0;
     data.map((player) => {
-      $("#list").append(
-        ` <li><span class="name">${player.userID}</span><span class="percent">${player.tokensCollected}</span></li>`
-      );
+      if (count < playerLimit) {
+        $("#list").append(
+          ` <li><span class="name">${player.userID}</span><span class="percent">${player.tokensCollected}</span></li>`
+        );
+        count++;
+      }
     });
   }
   hideLoading();
@@ -189,3 +194,14 @@ async function getSkyData() {
   var test = await client.db.getJSON(publicKey, appSecret);
   return test;
 }
+function showWarning(message) {
+  swal.fire({
+    text: message,
+    title: "Game Compatibility",
+    icon: "warning",
+  });
+}
+
+showWarning(
+  "Please note that the game is only playable if you have test eth only on the Binance Smartchain Network see **About** option in Game menu for more information"
+);
