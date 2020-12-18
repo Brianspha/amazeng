@@ -16,7 +16,7 @@ Simple POC Blockchain Based Maze Solving Game integrated with Sablier Protocol
 
 2. Video Demo
 
-[![Demo Doccou alpha](https://siasky.net/_ABwZ0XtL0hWJplNHC0uinluB58zspfrKZ40z5oWaXQ0Jw](https://siasky.net/AACskXDjLXKfEZpeGb0z-0vpkHCgiH2qteSiHAEPgMKMGQ)
+[![Demo Doccou alpha](https://siasky.net/_ABwZ0XtL0hWJplNHC0uinluB58zspfrKZ40z5oWaXQ0Jw)](https://siasky.net/AACskXDjLXKfEZpeGb0z-0vpkHCgiH2qteSiHAEPgMKMGQ)
 
 ### Binance Smartchain Deployed Contracts
 
