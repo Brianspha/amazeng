@@ -12,7 +12,7 @@ Simple POC Blockchain Based Maze Solving Game integrated with Sablier Protocol
 ### Demo
 
 1. Gif version
-![Gif](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+![Gif](https://siasky.net/AABz2QLd6A-6GrEtX_Xj7IcnaH_HLOFI_3GtAZyZajQAaQ)
    
 
 2. Video Demo
