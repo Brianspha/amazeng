@@ -12,11 +12,11 @@ Simple POC Blockchain Based Maze Solving Game integrated with Sablier Protocol
 ### Demo
 
 1. Gif version
-   ![alt text](http://url/to/img.png)
+   ![alt text](https://siasky.net/AABz2QLd6A-6GrEtX_Xj7IcnaH_HLOFI_3GtAZyZajQAaQ)
 
 2. Video Demo
 
-[![Demo Doccou alpha](http://share.gifyoutube.com/KzB6Gb.gif)](https://www.youtube.com/watch?v=ek1j272iAmc)
+[![Demo Doccou alpha](https://siasky.net/_ABwZ0XtL0hWJplNHC0uinluB58zspfrKZ40z5oWaXQ0Jw](https://siasky.net/AACskXDjLXKfEZpeGb0z-0vpkHCgiH2qteSiHAEPgMKMGQ)
 
 ### Binance Smartchain Deployed Contracts
 
@@ -32,5 +32,7 @@ Simple POC Blockchain Based Maze Solving Game integrated with Sablier Protocol
 
 
 ### Deployed DApps URL
-1. Matic Network - 
-2. Binance Smartchain - 
+1. Matic Network -  https://brianspha.github.io/maticAmazeng/
+2. Matic Network - https://siasky.net/AAA_KyhzNVjl1KKfQeFKq34oGLf9Jo5EuSuIVrBBHyp2Lw
+3. Binance Smartchain - https://brianspha.github.io/binanceAmazing/
+4. Binance Smartchain Skynet - https://siasky.net/AAA_KyhzNVjl1KKfQeFKq34oGLf9Jo5EuSuIVrBBHyp2Lw
