@@ -34,6 +34,4 @@ Simple POC Blockchain Based Maze Solving Game integrated with Sablier Protocol
 
 ### Deployed DApps URL
 1. Matic Network -  https://brianspha.github.io/maticAmazeng/
-2. Matic Network - https://siasky.net/AAA_KyhzNVjl1KKfQeFKq34oGLf9Jo5EuSuIVrBBHyp2Lw
-3. Binance Smartchain - https://brianspha.github.io/binanceAmazing/
-4. Binance Smartchain Skynet - https://siasky.net/AAA_KyhzNVjl1KKfQeFKq34oGLf9Jo5EuSuIVrBBHyp2Lw
+2. Binance Smartchain - https://brianspha.github.io/binanceAmazing/
