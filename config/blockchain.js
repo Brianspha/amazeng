@@ -34,6 +34,14 @@ module.exports = {
       },
     ],
   },
+  harmony: {
+    endpoint: process.env.HARMONY_PROVIDER_URL,
+    accounts: [
+      {
+        privateKey: process.env.HARMONY_P_KEY
+      },
+    ],
+  }
   // you can name an environment with specific settings and then specify with
   // "embark run custom_name" or "embark blockchain custom_name"
   //custom_name: {
